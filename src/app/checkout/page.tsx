@@ -1,158 +1,192 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useCart } from '@/context/CartContext'; 
-import Image from 'next/image';
+import { useState } from "react";
+import { useCart } from "@/context/CartContext";
+import Link from "next/link";
 
-export default function CheckoutPage() {
-  const router = useRouter();
-  const { cart } = useCart(); // Fetch cart items from context
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [error, setError] = useState('');
+interface UserDetails {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  cardNumber: string;
+  cardExpiry: string;
+  cardCVV: string;
+}
 
-  const handleCompletePurchase = () => {
-    if (!name || !email || !address || !cardNumber || !expiryDate || !cvv) {
-      setError('Please fill in all the fields.');
+const CheckoutPage = () => {
+  const { cart = [], clearCart } = useCart();
+  const [userDetails, setUserDetails] = useState<UserDetails>({
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    cardNumber: "",
+    cardExpiry: "",
+    cardCVV: "",
+  });
+  const [orderPlaced, setOrderPlaced] = useState(false);
+
+  const shipmentCharges = 5;
+
+  // Calculate subtotal for cart items
+  const calculateSubtotal = (): number => {
+    return cart.reduce((total: number, item) => {
+      const price = item.price;
+      if (isNaN(price)) {
+        console.error(`Invalid price for item: ${item.name}`);
+        return total;
+      }
+      return total + price * item.quantity;
+    }, 0);
+  };
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof UserDetails): void => {
+    setUserDetails((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 11);
+    setUserDetails((prev) => ({ ...prev, phone: value }));
+  };
+
+  const handlePlaceOrder = (): void => {
+    const emptyFields = Object.keys(userDetails).filter((key) => userDetails[key as keyof UserDetails].trim() === "");
+
+    if (emptyFields.length > 0) {
+      alert("Please fill out all the fields in the form.");
+      return;
+    }
+    if (userDetails.phone.length !== 11) {
+      alert("Phone number must be exactly 11 digits.");
       return;
     }
 
-    setTimeout(() => {
-      alert('Purchase complete! Thank you for shopping with us!');
-      router.push('/'); // Redirect to homepage after successful purchase
-    }, 2000);
-  };
+    if (userDetails.cardNumber.length !== 16) {
+      alert("Card number must be 16 digits.");
+      return;
+    }
 
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    if (userDetails.cardCVV.length !== 3) {
+      alert("CVV must be 3 digits.");
+      return;
+    }
+
+    clearCart();
+    setUserDetails({
+      name: "",
+      phone: "",
+      address: "",
+      city: "",
+      cardNumber: "",
+      cardExpiry: "",
+      cardCVV: "",
+    });
+    setOrderPlaced(true);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 to-teal-100 flex items-center justify-center">
-      <div className="max-w-3xl w-full bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
-          Complete Your Skin Care Purchase
-        </h1>
+    <div className="container mx-auto px-4 sm:px-20 py-8 min-h-screen bg-white flex justify-center items-center">
+      {orderPlaced ? (
+        <div className="text-center mt-20 flex flex-col items-center justify-center flex-grow">
+          <h2 className="text-2xl font-bold text-gray-800">Order placed successfully!</h2>
+          <p className="mt-4">Thank you for shopping with us.</p>
+          <Link href="/">
+            <button className="bg-black text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-800 transition mt-6">
+              Continue Shopping
+            </button>
+          </Link>
+        </div>
+      ) : (
+        <div className="w-full max-w-lg">
+          <h2 className="text-2xl text-black font-semibold mb-4 text-center">Checkout</h2>
 
-        {error && (
-          <div className="bg-red-100 text-red-600 p-4 rounded-lg mb-6">
-            {error}
-          </div>
-        )}
-
-        <form className="space-y-6">
-          {/* Personal Information */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Name</label>
+            <label className="block mb-2">Name</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              placeholder="John Doe"
+              value={userDetails.name}
+              onChange={(e) => handleFormChange(e, "name")}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="Your Name"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              placeholder="john@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Address</label>
+            <label className="block mb-2">Phone</label>
             <input
               type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              placeholder="123 Main St"
+              value={userDetails.phone}
+              onChange={handlePhoneChange}
+              maxLength={11}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="Your Phone (11 digits)"
             />
-          </div>
-
-          {/* Payment Details */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Card Number</label>
+            <label className="block mb-2">Address</label>
             <input
               type="text"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              placeholder="1234 5678 9012 3456"
+              value={userDetails.address}
+              onChange={(e) => handleFormChange(e, "address")}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="Your Address"
+            />
+            <label className="block mb-2">City</label>
+            <input
+              type="text"
+              value={userDetails.city}
+              onChange={(e) => handleFormChange(e, "city")}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="Your City"
             />
           </div>
 
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-600">Expiry Date</label>
-              <input
-                type="text"
-                value={expiryDate}
-                onChange={(e) => setExpiryDate(e.target.value)}
-                className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                placeholder="MM/YY"
-              />
+          <h3 className="text-xl font-semibold mt-6">Payment Details</h3>
+          <div>
+            <label className="block mb-2">Card Number</label>
+            <input
+              type="text"
+              value={userDetails.cardNumber}
+              onChange={(e) => handleFormChange(e, "cardNumber")}
+              maxLength={16}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="Your Card Number (16 digits)"
+            />
+            <label className="block mb-2">Expiry Date</label>
+            <input
+              type="text"
+              value={userDetails.cardExpiry}
+              onChange={(e) => handleFormChange(e, "cardExpiry")}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="MM/YY"
+            />
+            <label className="block mb-2">CVV</label>
+            <input
+              type="text"
+              value={userDetails.cardCVV}
+              onChange={(e) => handleFormChange(e, "cardCVV")}
+              maxLength={3}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+              placeholder="CVV (3 digits)"
+            />
+          </div>
+
+          <div className="mt-6 flex justify-between items-center">
+            <div>
+              <p className="md:text-xl font-semibold">Subtotal: ${calculateSubtotal().toFixed(2)} USD</p>
+              <p className="md:text-xl font-semibold">Shipment: ${shipmentCharges.toFixed(2)} USD</p>
             </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-600">CVV</label>
-              <input
-                type="text"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                className="mt-2 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                placeholder="123"
-              />
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
-            {cart.map((item) => (
-              <div key={item.id} className="flex justify-between items-center mb-4">
-                <div className="flex items-center">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={50}
-                    height={50}
-                    className="rounded-lg mr-4"
-                  />
-                  <span className="text-sm font-medium text-gray-700">{item.name}</span>
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  Rs. {(item.price * item.quantity).toFixed(2)}
-                </span>
-              </div>
-            ))}
-            <div className="flex justify-between items-center border-t pt-4 mt-4">
-              <span className="font-semibold text-lg text-gray-700">Total:</span>
-              <span className="font-semibold text-lg text-teal-600">
-                Rs. {calculateTotal()}
-              </span>
+            <div>
+              <p className="md:text-xl font-semibold">Total: ${(calculateSubtotal() + shipmentCharges).toFixed(2)} USD</p>
             </div>
           </div>
 
-          {/* Complete Purchase Button */}
           <button
-            type="button"
-            onClick={handleCompletePurchase}
-            className="w-full py-4 bg-teal-500 text-white rounded-lg font-semibold text-lg hover:bg-teal-600 transition-all shadow-md hover:shadow-lg mt-6"
+            onClick={handlePlaceOrder}
+            className="bg-black text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-800 transition mt-6 w-full"
           >
-            Complete Purchase
+            Place Order
           </button>
-        </form>
-      </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default CheckoutPage;

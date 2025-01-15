@@ -1,7 +1,7 @@
-// app/layout.tsx
-import Navbar from '@/components/Navbar';  // Import Navbar
-import Header from '@/components/Header';  // Import Header
-import Footer from '@/components/Footer';  // Import Footer
+import { CartProvider } from '@/context/CartContext'; 
+import Navbar from '@/components/Navbar';
+import Header from '@/components/Header';  
+import Footer from '@/components/Footer';  
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
@@ -27,13 +27,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* CartProvider ko wrap karo */}
+        <CartProvider>
           <Navbar />
           <Header />
           {children}  {/* Children pages will have access to CartContext */}
           <Footer />
+        </CartProvider>
       </body>
     </html>
   );

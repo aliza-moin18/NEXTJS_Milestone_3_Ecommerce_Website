@@ -1,76 +1,125 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import Image from "next/image";  
+import { motion } from "framer-motion";  // Import Framer Motion
 import HeroSection from './Hero/page';
-import { Button } from '@/components/ui/button';
-import Image from "next/image";
+import AboutSection from './about/page';
 
-export default function Home() {
-  const products = [
-    {
-      id: 4,
-      name: 'Product 4',
-      price: '$59.99',
-      image: '/photos/1.jpeg',
-    },
-    {
-      id: 5,
-      name: 'Product 5',
-      price: '$69.99',
-      image: '/photos/2.jpg',
-    },
-    {
-      id: 6,
-      name: 'Product 6',
-      price: '$79.99',
-      image: '/photos/3.jpeg',
-    },
-  ];
-
-  const router = useRouter();
-
-  const handleBuyNow = () => {
-    router.push('/cart'); 
-  };
-
+const Homepage = () => {
   return (
-    <div className="bg-gray-200 min-h-screen flex flex-col">
-      
-      {/* Hero Banner Section */}
+    <>
+      {/* Hero Section */}
       <HeroSection />
 
-      <main className="flex-grow p-8">
-        {/* New Arrivals Section */}
-        <section className="bg-slate-300 p-8 rounded-lg shadow-lg my-8">
-          <h2 className="text-[48px] font-bold uppercase text-center mb-6">New Arrivals</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white border border-gray-200 p-4 rounded-lg text-center transform transition-transform hover:scale-105 hover:shadow-2xl"
-              >
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={400}
-                  height={300}
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
-                <h3 className="text-2xl font-semibold text-gray-800">{product.name}</h3>
-                <p className="mt-2 text-xl font-semibold text-teal-600">{product.price}</p>
-                <Button
-                  onClick={() => handleBuyNow()}
-                  variant="outline"
-                  className="text-teal-600 border-teal-600 hover:bg-teal-600 hover:text-white transition-colors"
-                >
-                  Buy Now
-                </Button>
-              </div>
-            ))}
-          </div>
-        </section>
+      <div className="container mx-auto p-1 mt-40 mb-40">
+        <motion.h1
+          className="text-5xl font-bold text-center mb-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          Holistic Beauty Care
+        </motion.h1>
 
-      </main>
-    </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          {/* Hair Category */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.1 }}
+            whileHover={{ scale: 1.05 }} // Scale up on hover
+            whileTap={{ scale: 1.1 }}   // Scale up more on tap (click)
+          >
+            <Link href="/hair">
+              <div className="border p-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                <Image
+                  src="/haircare.jpg"
+                  alt="Hair Care"
+                  width={300}
+                  height={200}
+                  className="w-full h-60 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-xl font-semibold">Hair Care</h3>
+              </div>
+            </Link>
+          </motion.div>
+
+          {/* Face Category */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            whileHover={{ scale: 1.05 }} // Scale up on hover
+            whileTap={{ scale: 1.1 }}   // Scale up more on tap (click)
+          >
+            <Link href="/face">
+              <div className="border p-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                <Image
+                  src="/herosec.jpeg"
+                  alt="Face Care"
+                  width={300}
+                  height={200}
+                  className="w-full h-60 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-xl font-semibold">Face Care</h3>
+              </div>
+            </Link>
+          </motion.div>
+
+          {/* Lips Category */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            whileHover={{ scale: 1.05 }} // Scale up on hover
+            whileTap={{ scale: 1.1 }}   // Scale up more on tap (click)
+          >
+            <Link href="/lips">
+              <div className="border p-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                <Image
+                  src="/lipscare.jpg"
+                  alt="Lips Care"
+                  width={300}
+                  height={200}
+                  className="w-full h-60 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-xl font-semibold">Lips Care</h3>
+              </div>
+            </Link>
+          </motion.div>
+
+          {/* Body Category */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            whileHover={{ scale: 1.05 }} // Scale up on hover
+            whileTap={{ scale: 1.1 }}   // Scale up more on tap (click)
+          >
+            <Link href="/body">
+              <div className="border p-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                <Image
+                  src="/bodycare.jpeg"
+                  alt="Body Care"
+                  width={300}
+                  height={500}
+                  className="w-full h-60 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-xl font-semibold">Body Care</h3>
+              </div>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+
+      <AboutSection />
+    </>
   );
-}
+};
+
+export default Homepage;

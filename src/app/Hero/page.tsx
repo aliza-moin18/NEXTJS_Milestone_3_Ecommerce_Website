@@ -1,61 +1,82 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 function HeroSection() {
   return (
     <section className="relative h-screen">
-
-      
-      {/* Grid Layout with Main Background Image and Small Images Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-        {/* Left Background Image */}
-        <div className="relative w-full h-full">
-          <Image 
-            src="/heroo.jpeg" // Path to the image inside the 'public' folder
-            alt="Hero Image 1"
-            layout="fill" // Ensures the image takes up the full div
-            objectFit="cover" // Makes the image cover the entire div
-            className="opacity-90 ml-3" // Optional: Adjust opacity if you need it
-          />
-        </div>
 
-        {/* Right Side with Two Images in the Same Row */}
-        <div className="flex flex-col justify-center items-start space-y-4 px-4 md:px-12 py-8">
-          {/* Row with Two Images */}
-          <div className="flex w-full justify-between space-x-4">
-            {/* First Image */}
-            <div className="relative w-1/2 h-[200px]"> {/* Reduced height */}
-              <Image 
-                src="/hero6.jpeg" // Path to the first small image
-                alt="Small Image 1"
-                layout="fill"
-                objectFit="cover"
-                className="border-4 border-black rounded-lg" // Black border and rounded corners
-              />
-            </div>
-            {/* Second Image */}
-            <div className="relative w-1/2 h-[200px]"> {/* Reduced height */}
-              <Image 
-                src="/hero6.jpeg" // Path to the second small image
-                alt="Small Image 2"
-                layout="fill"
-                objectFit="cover"
-                className="border-4 border-black rounded-lg" // Black border and rounded corners
-              />
-            </div>
-          </div>
-
-          {/* Hero Text Below Images */}
-          <div className="text-center mt-6 bg-black bg-opacity-50 p-6 rounded-lg shadow-lg">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-              Your Skin, Our Passion
-            </h1>
-            <p className="text-lg text-white mb-6">Discover our range of natural skincare products.</p>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
+        {/* Left Section with Text and Animation */}
+        <motion.div
+          className="flex justify-center items-center h-[600px] bg-[#faf8ed]"
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="text-center px-4 md:px-12">
+            <motion.h1
+              className="text-4xl sm:text-5xl font-bold text-black mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
+            >
+              Beauty blooms with Skincare.
+            </motion.h1>
+            <motion.p
+              className="text-xl text-black mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4 }}
+            >
+              Nourish your skin, hair, lips, and body with our premium skincare products designed to enhance your natural beauty and boost your confidence.
+            </motion.p>
+            <motion.button
+              className="bg-black hover:bg-gray-950 mt-8 text-white font-bold py-3 px-12 rounded-[44px] transition-colors"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+            >
               Shop Now
-            </button>
+            </motion.button>
           </div>
+        </motion.div>
+
+        {/* Right Section with Two Images Side by Side and Animations */}
+        <div className="flex justify-between items-center h-[600px] px-8 md:px-12 py-8 bg-[#b9937b]">
+          
+          {/* First Image with Animation */}
+          <motion.div
+            className="relative w-full md:w-1/2 h-[400px]"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <Image 
+              src="/hero1.avif" 
+              alt="First Image"
+              layout="fill"
+              objectFit="cover"
+              className="border-4 border-black rounded-lg shadow-lg"
+            />
+          </motion.div>
+          
+          {/* Second Image with Animation */}
+          <motion.div
+            className="relative w-full md:w-1/2 h-[400px]"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <Image 
+              src="/heroooo.jpeg" 
+              alt="Second Image"
+              layout="fill"
+              objectFit="cover"
+              className="border-4 border-black rounded-lg shadow-lg" 
+            />
+          </motion.div>
+
         </div>
       </div>
     </section>
@@ -63,4 +84,3 @@ function HeroSection() {
 }
 
 export default HeroSection;
-
